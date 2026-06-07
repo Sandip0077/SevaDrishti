@@ -107,4 +107,9 @@ public class AuthController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<?> health() {
+        return ResponseEntity.ok(Map.of("status", "UP", "message", "SevaDrishti Backend is running"));
+    }
 }
