@@ -2,11 +2,16 @@ import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 const AI_BASE = `${API_BASE}/ai`;
+const REQUEST_TIMEOUT_MS = 20000;
+const AUTH_TIMEOUT_MS = 12000;
 
 const api = axios.create({
   baseURL: API_BASE,
+  timeout: REQUEST_TIMEOUT_MS,
   headers: { 'Content-Type': 'application/json' },
 });
+
+const isAuthEndpoint = (url = '') => url.includes('/auth/login') || url.includes('/auth/register');
 
 // Attach JWT token to every request
 api.interceptors.request.use((config) => {
@@ -21,7 +26,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !isAuthEndpoint(error.config?.url)) {
       localStorage.removeItem('sevadrishti_token');
       localStorage.removeItem('sevadrishti_user');
       window.location.href = '/login';
@@ -32,6 +37,7 @@ api.interceptors.response.use(
 
 const aiApi = axios.create({
   baseURL: AI_BASE,
+  timeout: REQUEST_TIMEOUT_MS,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -59,8 +65,8 @@ aiApi.interceptors.response.use(
 
 // ====== AUTH ======
 export const authService = {
-  register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login', data),
+  register: (data) => api.post('/auth/register', data, { timeout: AUTH_TIMEOUT_MS }),
+  login: (data) => api.post('/auth/login', data, { timeout: AUTH_TIMEOUT_MS }),
   getMe: () => api.get('/auth/me'),
 };
 

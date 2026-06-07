@@ -7,6 +7,16 @@ import { Eye, Mail, Lock, ArrowRight, ArrowLeft, CheckCircle, AlertCircle, Phone
 import toast from 'react-hot-toast';
 import Logo from '../components/Logo';
 
+const getRegistrationErrorMessage = (err) => {
+  if (err.code === 'ECONNABORTED') {
+    return 'Registration is taking too long. Please try again in a moment.';
+  }
+  if (!err.response) {
+    return 'Cannot reach the server right now. Please check your connection and try again.';
+  }
+  return err.response.data?.message || 'Registration failed. Please try again.';
+};
+
 const SKILLS = [
   'First Aid', 'Medical Care', 'Crowd Management', 'Navigation & Guides',
   'Translation', 'Tech Support', 'Logistics', 'Communication',
@@ -125,11 +135,11 @@ export default function RegisterPage() {
     setError('');
     try {
       const payload = {
-        name: formData.name,
-        email: formData.email,
+        name: formData.name.trim(),
+        email: formData.email.trim(),
         password: formData.password,
         role: 'VOLUNTEER',
-        phone: formData.phone,
+        phone: formData.phone.trim(),
         age: parseInt(formData.age) || null,
         emergencyContact: formData.emergencyContact,
         address: formData.address,
@@ -147,7 +157,7 @@ export default function RegisterPage() {
       toast.success('Registration successful! Welcome to SevaDrishti');
       navigate('/volunteer/portal');
     } catch (err) {
-      const message = err.response?.data?.message || 'Registration failed. Please try again.';
+      const message = getRegistrationErrorMessage(err);
       setError(message);
       toast.error(message);
     } finally {
@@ -524,7 +534,7 @@ export default function RegisterPage() {
 
                 <div className="glass-card-static" style={{ padding: '20px' }}>
                   <h5 style={{ color: 'var(--neutral-500)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Calendar size={18} /> Availability
+                    <CalendarIcon size={18} /> Availability
                   </h5>
                   <div className="grid-2" style={{ gap: '8px' }}>
                     <div><strong>From:</strong> {formData.availableFrom}</div>

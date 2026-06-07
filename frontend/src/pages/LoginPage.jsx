@@ -6,6 +6,16 @@ import { Eye, Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Logo from '../components/Logo';
 
+const getAuthErrorMessage = (err) => {
+  if (err.code === 'ECONNABORTED') {
+    return 'Login is taking too long. Please try again in a moment.';
+  }
+  if (!err.response) {
+    return 'Cannot reach the server right now. Please check your connection and try again.';
+  }
+  return err.response.data?.message || 'Invalid email or password';
+};
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,7 +35,7 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const user = await login(email, password);
+      const user = await login(email.trim(), password);
       toast.success(`Welcome back, ${user.name}!`);
       
       // Navigate based on role
@@ -41,7 +51,7 @@ export default function LoginPage() {
           navigate('/');
       }
     } catch (err) {
-      const message = err.response?.data?.message || 'Invalid email or password';
+      const message = getAuthErrorMessage(err);
       setError(message);
       toast.error(message);
     } finally {

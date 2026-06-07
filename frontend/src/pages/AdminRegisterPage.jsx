@@ -6,6 +6,16 @@ import { Eye, Mail, Lock, ArrowRight, AlertCircle, User, Phone } from 'lucide-re
 import toast from 'react-hot-toast';
 import Logo from '../components/Logo';
 
+const getRegistrationErrorMessage = (err) => {
+  if (err.code === 'ECONNABORTED') {
+    return 'Registration is taking too long. Please try again in a moment.';
+  }
+  if (!err.response) {
+    return 'Cannot reach the server right now. Please check your connection and try again.';
+  }
+  return err.response.data?.message || 'Registration failed';
+};
+
 export default function AdminRegisterPage() {
   const [formData, setFormData] = useState({
     name: '',
@@ -40,12 +50,15 @@ export default function AdminRegisterPage() {
     try {
       await register({
         ...formData,
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
         role: 'ADMIN'
       });
       toast.success('Organizer account created successfully!');
       navigate('/admin/dashboard');
     } catch (err) {
-      const message = err.response?.data?.message || 'Registration failed';
+      const message = getRegistrationErrorMessage(err);
       setError(message);
       toast.error(message);
     } finally {
