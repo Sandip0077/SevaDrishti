@@ -382,107 +382,18 @@ Backend AI routes are protected and proxied through `/api/ai`.
 | POST | `/api/ai/incident-responders` | Recommend responders for incidents |
 | POST | `/api/ai/rebalance-zones` | Recommend zone rebalancing |
 | POST | `/api/ai/analyze` | Run general AI analysis |
-
+```md
 ## Database Schema Overview
 
-### `users`
-
-Stores authentication and user identity data.
-
-- `id`
-- `name`
-- `email`
-- `password`
-- `role`
-- `phone`
-- `createdAt`
-
-### `volunteers`
-
-Stores volunteer profile, capabilities, availability, and workload data.
-
-- `id`
-- `userId`
-- `name`
-- `email`
-- `phone`
-- `age`
-- `emergencyContact`
-- `address`
-- `skills`
-- `languages`
-- `fitnessLevel`
-- `experience`
-- `availableFrom`
-- `availableTo`
-- `shiftPreference`
-- `preferredZones`
-- `currentZone`
-- `status`
-- `fatigueScore`
-- `shiftsCompleted`
-- `totalHoursWorked`
-- `createdAt`
-
-### `zones`
-
-Stores operational zone data.
-
-- `id`
-- `name`
-- `type`
-- `latitude`
-- `longitude`
-- `requiredVolunteers`
-- `currentVolunteers`
-- `crowdDensity`
-- `description`
-- `status`
-
-### `allocations`
-
-Stores volunteer deployment records.
-
-- `id`
-- `volunteerId`
-- `volunteerName`
-- `zoneId`
-- `zoneName`
-- `assignedBy`
-- `aiRecommended`
-- `score`
-- `status`
-- `createdAt`
-
-### `shifts`
-
-Stores volunteer shift assignments.
-
-- `id`
-- `volunteerId`
-- `volunteerName`
-- `zoneId`
-- `zoneName`
-- `startTime`
-- `endTime`
-- `taskIntensity`
-- `status`
-- `createdAt`
-
-### `incidents`
-
-Stores emergency and operational incidents.
-
-- `id`
-- `type`
-- `severity`
-- `zoneId`
-- `zoneName`
-- `description`
-- `status`
-- `assignedVolunteers`
-- `createdAt`
-- `resolvedAt`
+| Collection | Purpose | Key Fields |
+|------------|---------|------------|
+| **users** | Authentication & user management | id, name, email, role, phone |
+| **volunteers** | Volunteer profiles & availability | id, userId, skills, experience, preferredZones, currentZone, fatigueScore, status |
+| **zones** | Deployment zone management | id, name, type, crowdDensity, requiredVolunteers, currentVolunteers, status |
+| **allocations** | Volunteer-to-zone assignments | id, volunteerId, zoneId, aiRecommended, score, status |
+| **shifts** | Volunteer shift scheduling | id, volunteerId, zoneId, startTime, endTime, status |
+| **incidents** | Emergency & operational incidents | id, type, severity, zoneId, assignedVolunteers, status |
+```
 
 ## Scalability & Performance Considerations
 
@@ -525,8 +436,8 @@ Stores emergency and operational incidents.
 - Offline mode for low-connectivity event areas.
 - Predictive staffing forecasts before peak crowd periods.
 
-## Live Deployment Link Placeholder
+## Live Deployment
 
-- Frontend: `<frontend-live-url>`
-- Backend API: `<backend-api-url>`
-- AI Service: `<ai-service-url>`
+- **Frontend:** [SevaDrishti Frontend](https://sevadrishti.netlify.app/)
+- **Backend API:** [Spring Boot API](https://sevadrishti-backend.onrender.com/api)
+- **AI Service:** [AI Service](https://paulsandip599-sevadrishti-ai.hf.space)
