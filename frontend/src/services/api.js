@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
-const AI_BASE = import.meta.env.VITE_AI_URL || 'http://localhost:8000';
+const AI_BASE = `${API_BASE}/ai`;
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -34,6 +34,28 @@ const aiApi = axios.create({
   baseURL: AI_BASE,
   headers: { 'Content-Type': 'application/json' },
 });
+
+// Attach JWT token to every request for aiApi
+aiApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem('sevadrishti_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Handle 401 responses for aiApi
+aiApi.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('sevadrishti_token');
+      localStorage.removeItem('sevadrishti_user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 // ====== AUTH ======
 export const authService = {
@@ -100,14 +122,14 @@ export const dashboardService = {
 
 // ====== AI SERVICE ======
 export const aiService = {
-  skillMatch: (data) => aiApi.post('/ai/skill-match', data),
-  suggestTags: (data) => aiApi.post('/ai/suggest-tags', data),
-  optimizeAllocation: (data) => aiApi.post('/ai/optimize-allocation', data),
-  predictFatigue: (data) => aiApi.post('/ai/predict-fatigue', data),
-  bulkFatigue: (data) => aiApi.post('/ai/bulk-fatigue', data),
-  findResponders: (data) => aiApi.post('/ai/incident-responders', data),
-  rebalanceZones: (data) => aiApi.post('/ai/rebalance-zones', data),
-  analyze: (data) => aiApi.post('/ai/analyze', data),
+  skillMatch: (data) => aiApi.post('/skill-match', data),
+  suggestTags: (data) => aiApi.post('/suggest-tags', data),
+  optimizeAllocation: (data) => aiApi.post('/optimize-allocation', data),
+  predictFatigue: (data) => aiApi.post('/predict-fatigue', data),
+  bulkFatigue: (data) => aiApi.post('/bulk-fatigue', data),
+  findResponders: (data) => aiApi.post('/incident-responders', data),
+  rebalanceZones: (data) => aiApi.post('/rebalance-zones', data),
+  analyze: (data) => aiApi.post('/analyze', data),
   health: () => aiApi.get('/health'),
 };
 
