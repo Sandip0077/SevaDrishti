@@ -26,12 +26,82 @@ SevaDrishti replaces manual volunteer allocation with a role-aware, zone-aware, 
 ## System Architecture
 
 ```mermaid
-flowchart LR
-    U[User Browser] --> F[React Frontend]
-    F -->|REST API + JWT| B[Spring Boot Backend]
-    B --> DB[(MongoDB)]
-    B -->|Protected AI Proxy| A[FastAPI AI Service]
-    A --> G[Gemini / NLP Logic]
+flowchart TB
+    subgraph Client["User Layer"]
+        VOL["Volunteer"]
+        ADMIN["Admin / Organizer"]
+    end
+
+    subgraph Frontend["Frontend - React + Vite"]
+        UI["Pages & Components<br/>Landing, Register, Login,<br/>Volunteer Portal, Admin Console"]
+        API_CLIENT["Axios API Client<br/>JWT Header + Request Timeout"]
+    end
+
+    subgraph Backend["Backend - Spring Boot"]
+        SECURITY["Security Layer<br/>CORS + JWT Filter + BCrypt"]
+        AUTH["Auth API<br/>Register, Login, Me, Health"]
+        OPS["Operations APIs<br/>Volunteers, Zones, Allocations,<br/>Shifts, Incidents, Dashboard"]
+        AI_PROXY["AI Proxy API<br/>Protected /api/ai routes"]
+    end
+
+    subgraph Database["MongoDB Collections"]
+        USERS[("users")]
+        VOLUNTEERS[("volunteers")]
+        ZONES[("zones")]
+        ALLOCATIONS[("allocations")]
+        SHIFTS[("shifts")]
+        INCIDENTS[("incidents")]
+    end
+
+    subgraph AIService["AI Service - FastAPI"]
+        AI_ROUTER["AI Endpoint Router<br/>/health + /ai routes"]
+        SKILL["Skill Matching"]
+        TAGS["Skill Auto-Tagging"]
+        OPTIMIZE["Allocation Optimization"]
+        REBALANCE["Zone Rebalancing"]
+        FATIGUE["Fatigue Prediction"]
+        RESPONDERS["Incident Responders"]
+        ANALYZE["General Analysis"]
+    end
+
+    subgraph Intelligence["Intelligence Layer"]
+        RULES["Rule-Based Scoring<br/>Skill, Zone, Fatigue, Distance"]
+        GEMINI["Gemini API"]
+    end
+
+    VOL --> UI
+    ADMIN --> UI
+    UI --> API_CLIENT
+    API_CLIENT -->|"REST API + JWT"| SECURITY
+
+    SECURITY --> AUTH
+    SECURITY --> OPS
+    SECURITY --> AI_PROXY
+
+    AUTH --> USERS
+    AUTH --> VOLUNTEERS
+    OPS --> VOLUNTEERS
+    OPS --> ZONES
+    OPS --> ALLOCATIONS
+    OPS --> SHIFTS
+    OPS --> INCIDENTS
+
+    AI_PROXY -->|"Secure backend-to-AI calls"| AI_ROUTER
+    AI_ROUTER --> SKILL
+    AI_ROUTER --> TAGS
+    AI_ROUTER --> OPTIMIZE
+    AI_ROUTER --> REBALANCE
+    AI_ROUTER --> FATIGUE
+    AI_ROUTER --> RESPONDERS
+    AI_ROUTER --> ANALYZE
+
+    SKILL --> RULES
+    OPTIMIZE --> RULES
+    REBALANCE --> RULES
+    FATIGUE --> RULES
+    RESPONDERS --> RULES
+    TAGS --> GEMINI
+    ANALYZE --> GEMINI
 ```
 
 ### Architecture Summary
@@ -104,49 +174,49 @@ Supports prompt-based operational analysis using contextual event data.
 
 ## Screenshots
 
-Add screenshots inside `docs/screenshots/` and replace the placeholder files below with actual images.
+Screenshots are stored in `docs/screenshots/`.
 
 ### Landing Page
 
 The landing page introduces SevaDrishti, its purpose, and the main volunteer/admin entry points.
 
-![Landing Page](docs/screenshots/landing-page.png)
+<img src="./docs/screenshots/landing-page.png" alt="Landing Page" width="100%">
 
 ### Volunteer Dashboard
 
 The volunteer dashboard shows personal deployment information, assignments, shifts, and volunteer-specific activity.
 
-![Volunteer Dashboard](docs/screenshots/volunteer-dashboard.png)
+<img src="./docs/screenshots/volunteer-dashboard.png" alt="Volunteer Dashboard" width="100%">
 
 ### Admin Dashboard
 
 The admin dashboard provides a high-level operational view of volunteers, zones, incidents, shifts, and activity.
 
-![Admin Dashboard](docs/screenshots/admin-dashboard.png)
+<img src="./docs/screenshots/admin-dashboard.png" alt="Admin Dashboard" width="100%">
 
 ### Admin Volunteers Selection
 
 The volunteer selection screen helps admins review registered volunteers and choose suitable people for deployment.
 
-![Admin Volunteers Selection](docs/screenshots/admin-volunteers-selection.png)
+<img src="./docs/screenshots/admin-volunteers-selection.png" alt="Admin Volunteers Selection" width="100%">
 
 ### Admin Zones Create
 
 The zones screen allows admins to create and manage operational zones with staffing requirements and crowd indicators.
 
-![Admin Zones Create](docs/screenshots/admin-zones-create.png)
+<img src="./docs/screenshots/admin-zones-create.png" alt="Admin Zones Create" width="100%">
 
 ### Admin Deployments Page
 
 The deployments page manages volunteer-to-zone allocations and AI-assisted assignment decisions.
 
-![Admin Deployments Page](docs/screenshots/admin-deployments-page.png)
+<img src="./docs/screenshots/admin-deployments-page.png" alt="Admin Deployments Page" width="100%">
 
 ### Admin Shifts Page
 
 The shifts page helps admins schedule volunteer work periods, track task intensity, and manage shift operations.
 
-![Admin Shifts Page](docs/screenshots/admin-shifts-page.png)
+<img src="./docs/screenshots/admin-shifts-page.png" alt="Admin Shifts Page" width="100%">
 
 ## Installation & Setup Instructions
 
