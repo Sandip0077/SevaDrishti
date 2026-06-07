@@ -21,15 +21,29 @@ export default function Logo({ size = 'md' }) {
       }}>
         <ScanEye size={iconSize} strokeWidth={2.5} />
       </div>
-      <span style={{
-        fontFamily: 'var(--font-heading)',
-        fontSize,
-        fontWeight: 800,
-        background: 'var(--gradient-brand)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        letterSpacing: '-0.02em'
-      }}>SevaDrishti</span>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'left', lineHeight: 1.15 }}>
+        <span style={{
+          fontFamily: 'var(--font-heading)',
+          fontSize,
+          fontWeight: 800,
+          background: 'var(--gradient-brand)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          letterSpacing: '-0.02em'
+        }}>SevaDrishti</span>
+        <span style={{ 
+          fontSize: size === 'lg' ? '0.85rem' : size === 'sm' ? '0.52rem' : '0.68rem', 
+          fontWeight: 700, 
+          color: '#F59E0B', 
+          marginTop: size === 'lg' ? '4px' : '2px',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          fontFamily: 'Inter, sans-serif'
+        }}>
+          Divine Service, Smart Vision
+        </span>
+      </div>
     </div>
   );
 }
